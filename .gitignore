@@ -1,0 +1,14 @@
+# venv / caches
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+# env
+.env
+
+# local data
+*.log
