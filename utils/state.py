@@ -1,15 +1,26 @@
-user_state = {}
+USER_STATES = {}
 
 def get_state(user_id):
-    if user_id not in user_state:
-        user_state[user_id] = {
-            "solved": {},
+    if user_id not in USER_STATES:
+        USER_STATES[user_id] = {
+            "total_score": 0,
+            "mistakes": 0,
             "in_round": False,
             "round": None,
-            "total_score": 0,
-            "mistakes": 0
+            "solved": {}
         }
-    return user_state[user_id]
+    return USER_STATES[user_id]
+
+def reset_state(user_id):
+    if user_id in USER_STATES:
+        USER_STATES[user_id] = {
+            "total_score": 0,
+            "mistakes": 0,
+            "in_round": False,
+            "round": None,
+            "solved": {}
+        }
+    return get_state(user_id)
 
 def _ensure_set(st, category):
     s = st["solved"].get(category)
@@ -46,12 +57,11 @@ def mark_solved(user_id, category, index):
     s = _ensure_set(st, category)
     try:
         s.add(int(index))
-    except Exception:
+    except (ValueError, TypeError):
         pass
 
 def is_category_completed(user_id, category, questions):
-    st = get_state(user_id)
-    solved = _ensure_set(st, category)
+    solved = get_solved_indices(user_id, category)
     total = total_in_category(questions, category)
     return total > 0 and len(solved) >= total
 
@@ -60,3 +70,9 @@ def all_categories_completed(user_id, questions):
         if not is_category_completed(user_id, category, questions):
             return False
     return True
+
+def save_user_progress():
+    pass
+
+def load_user_progress():
+    pass

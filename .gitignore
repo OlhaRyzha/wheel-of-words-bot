@@ -12,3 +12,6 @@ __pycache__/
 
 # local data
 *.log
+
+# Ignore PyCharm project settings
+.idea/
