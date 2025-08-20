@@ -63,7 +63,8 @@ def mark_solved(user_id, category, index):
 def is_category_completed(user_id, category, questions):
     solved = get_solved_indices(user_id, category)
     total = total_in_category(questions, category)
-    return total > 0 and len(solved) >= total
+    return 0 < total <= len(solved)
+
 
 def all_categories_completed(user_id, questions):
     for category in questions.keys():

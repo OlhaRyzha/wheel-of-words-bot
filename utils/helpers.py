@@ -4,13 +4,11 @@ import json
 import random
 from tqdm import tqdm
 from telebot import types
-from .constants import WHEEL, DISABLED_PREFIX, DISABLED_TAG, QUESTIONS_PATH, ROUND_STATUS_TEMPLATE
+from .constants import WHEEL, DISABLED_PREFIX, DISABLED_TAG, QUESTIONS_PATH, ROUND_STATUS_TEMPLATE, BASE_DIR
 
-def project_root():
-    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def resolve_path(rel_path):
-    return os.path.join(project_root(), rel_path)
+    return os.path.join(BASE_DIR, rel_path)
 
 def load_questions(file_path=None):
     if file_path is None:

@@ -1,7 +1,4 @@
-import json
-import os
 import random
-from telebot import types
 from utils.constants import (
     WORD_BONUS_PER_LETTER, DISABLED_PREFIX, DISABLED_TAG, REVEAL_ON_SKIP,
     AUDIO_BRASS, AUDIO_FAIL, AUDIO_LEVELUP, AUDIO_AHERO,
@@ -13,7 +10,7 @@ from utils.constants import (
     INVALID_CATEGORY_MESSAGE, SKIP_TURN_NO_REVEAL_MESSAGE, CATEGORY_WIN_MESSAGE
 )
 from utils.helpers import (
-    spin_wheel, mask_str, sanitize_category, send_audio_if_exists,
+    spin_wheel,  sanitize_category, send_audio_if_exists,
     send_animation_if_exists, get_round_status_text, try_complete_round,
     handle_wrong_word, load_questions
 )
@@ -66,6 +63,8 @@ def launch_round(bot, message, category):
         message.chat.id,
         f"Категорія: {category}\nПідказка: {hint}\n\n{status_text}"
     )
+    return None
+
 
 def handle_category_selection(bot, message):
     raw = message.text or ""
@@ -88,7 +87,7 @@ def process_guess(bot, message):
     guess_up = ((message.text or "").strip()).upper()
     if not guess_up:
         bot.send_message(message.chat.id, INVALID_INPUT_MESSAGE)
-        return
+        return None
     if len(guess_up) > 1:
         if guess_up == r["word"]:
             unopened = [i for i, ch in enumerate(r["mask"]) if ch == "_"]
@@ -112,17 +111,17 @@ def process_guess(bot, message):
             bot.send_message(message.chat.id, WRONG_WORD_MESSAGE)
             status_text = get_round_status_text(r, st['total_score'])
             bot.send_message(message.chat.id, status_text)
-            return
+            return None
     if not guess_up.isalpha() or len(guess_up) != 1:
         bot.send_message(message.chat.id, INVALID_INPUT_MESSAGE)
         status_text = get_round_status_text(r, st['total_score'])
         bot.send_message(message.chat.id, status_text)
-        return
+        return None
     if guess_up in r["guessed"]:
         bot.send_message(message.chat.id, ALREADY_GUESSED_MESSAGE)
         status_text = get_round_status_text(r, st['total_score'])
         bot.send_message(message.chat.id, status_text)
-        return
+        return None
     bot.send_message(message.chat.id, SPINNING_WHEEL_MESSAGE)
     sector, value = spin_wheel()
     if value == 0:
@@ -138,7 +137,7 @@ def process_guess(bot, message):
             bot.send_message(message.chat.id, SKIP_TURN_NO_REVEAL_MESSAGE)
         status_text = get_round_status_text(r, st['total_score'])
         bot.send_message(message.chat.id, status_text)
-        return
+        return None
     r["guessed"].add(guess_up)
     if guess_up in r["word"]:
         count = 0
@@ -162,6 +161,8 @@ def process_guess(bot, message):
         return show_categories(bot, message.chat.id)
     status_text = get_round_status_text(r, st['total_score'])
     bot.send_message(message.chat.id, status_text)
+    return None
+
 
 def register_handlers(bot):
     @bot.message_handler(commands=["start"])
