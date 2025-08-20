@@ -1,0 +1,17 @@
+app = "wheel-of-words-bot"
+
+[build]
+  builder = "paketobuildpacks/builder:base"
+
+[env]
+  PYTHONUNBUFFERED = "true"
+
+[processes]
+  app = "python main.py"
+
+[[services]]
+  internal_port = 8080
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 80
