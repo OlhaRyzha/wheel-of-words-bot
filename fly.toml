@@ -1,17 +1,14 @@
-app = "wheel-of-words-bot"
+app = "telegram-bot-app"
+primary_region = "fra"
 
 [build]
   builder = "paketobuildpacks/builder:base"
 
 [env]
-  PYTHONUNBUFFERED = "true"
+  PYTHONUNBUFFERED = "1"
+  API_TOKEN = "${API_TOKEN}"
 
-[processes]
-  app = "python main.py"
 
-[[services]]
-  internal_port = 8080
-  processes = ["app"]
-
-  [[services.ports]]
-    port = 80
+[[processes]]
+  [processes.worker]
+    command = "python bot.py"
