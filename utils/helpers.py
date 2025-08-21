@@ -4,7 +4,8 @@ import json
 import random
 from tqdm import tqdm
 from telebot import types
-from .constants import WHEEL, DISABLED_PREFIX, DISABLED_TAG, QUESTIONS_PATH, ROUND_STATUS_TEMPLATE, BASE_DIR
+from .constants import WHEEL, DISABLED_PREFIX, DISABLED_TAG, QUESTIONS_PATH, ROUND_STATUS_TEMPLATE, BASE_DIR, \
+    BTN_SKIP_ROUND, BTN_RESET
 
 
 def resolve_path(rel_path):
@@ -57,6 +58,7 @@ def create_category_keyboard(user_id, questions):
             buttons.append(types.KeyboardButton(category))
     if buttons:
         markup.add(*buttons)
+    markup.add(types.KeyboardButton(BTN_RESET))
     return markup
 
 def get_random_question(category, solved_indices, questions):
@@ -131,3 +133,9 @@ def handle_wrong_word(bot, user_id, state):
     if state["total_score"] <= 0:
         send_audio_if_exists(bot, user_id, AUDIO_FAIL)
         send_animation_if_exists(bot, user_id, GIF_GAME_OVER, caption=GAME_OVER_MESSAGE)
+
+
+def create_round_keyboard():
+    mk = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    mk.add(types.KeyboardButton(BTN_SKIP_ROUND), types.KeyboardButton(BTN_RESET))
+    return mk

@@ -1,4 +1,5 @@
 from telebot import types
+from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton
 
 from handlers.game_handler import start_game
 from utils.constants import HELP_TEXT
@@ -6,10 +7,10 @@ from utils.constants import HELP_TEXT
 
 def register_handlers(bot):
     @bot.message_handler(commands=['start'])
-    def start(message):
-        kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-        start_play_btn = types.KeyboardButton("🎮 Грати в Поле Чудес")
-        help_btn= types.KeyboardButton("Правила")
+    def start(message: Message):
+        kb: ReplyKeyboardMarkup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        start_play_btn: KeyboardButton = types.KeyboardButton("🎮 Грати в Поле Чудес")
+        help_btn: KeyboardButton= types.KeyboardButton("Правила")
         kb.add(start_play_btn, help_btn)
         name = " ".join(filter(None, [message.from_user.first_name, message.from_user.last_name]))
         bot.send_message(
