@@ -136,13 +136,17 @@ def process_guess(bot, message):
                 if try_complete_round(bot, user_id, st, r):
                     return show_categories(bot, user_id)
                 status_text = get_round_status_text(r, st["total_score"])
-                bot.send_message(user_id, status_text, reply_markup=create_round_keyboard())
+                bot.send_message(
+                    user_id, status_text, reply_markup=create_round_keyboard()
+                )
                 return None
             else:
                 handle_wrong_word(bot, user_id, st)
                 bot.send_message(user_id, WRONG_WORD_MESSAGE)
                 status_text = get_round_status_text(r, st["total_score"])
-                bot.send_message(user_id, status_text, reply_markup=create_round_keyboard())
+                bot.send_message(
+                    user_id, status_text, reply_markup=create_round_keyboard()
+                )
                 return None
 
         else:
@@ -187,15 +191,21 @@ def process_guess(bot, message):
         gained = value * count
         r["score"] += gained
         st["total_score"] += gained
-        bot.send_message(user_id, CORRECT_LETTER_MESSAGE.format(letter=guess_up, gained=gained))
+        bot.send_message(
+            user_id, CORRECT_LETTER_MESSAGE.format(letter=guess_up, gained=gained)
+        )
     else:
         st["mistakes"] += 1
         st["total_score"] -= value
         send_audio_if_exists(bot, user_id, AUDIO_BRASS)
-        bot.send_message(user_id, WRONG_LETTER_MESSAGE.format(letter=guess_up, value=value))
+        bot.send_message(
+            user_id, WRONG_LETTER_MESSAGE.format(letter=guess_up, value=value)
+        )
         if st["total_score"] <= 0:
             send_audio_if_exists(bot, user_id, AUDIO_FAIL)
-            send_animation_if_exists(bot, user_id, GIF_GAME_OVER, caption=GAME_OVER_MESSAGE)
+            send_animation_if_exists(
+                bot, user_id, GIF_GAME_OVER, caption=GAME_OVER_MESSAGE
+            )
     if try_complete_round(bot, user_id, st, r):
         return show_categories(bot, user_id)
     status_text = get_round_status_text(r, st["total_score"])

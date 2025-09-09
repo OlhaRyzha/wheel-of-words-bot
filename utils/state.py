@@ -4,12 +4,20 @@ from typing import Dict, Any
 
 USER_STATES: Dict[int, Dict[str, Any]] = {}
 STATE_FILE = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "user_state.json"
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "data",
+    "user_state.json",
 )
 
 
 def _default_state() -> Dict[str, Any]:
-    return {"total_score": 0, "mistakes": 0, "in_round": False, "round": None, "solved": {}}
+    return {
+        "total_score": 0,
+        "mistakes": 0,
+        "in_round": False,
+        "round": None,
+        "solved": {},
+    }
 
 
 def get_state(user_id: int) -> Dict[str, Any]:
