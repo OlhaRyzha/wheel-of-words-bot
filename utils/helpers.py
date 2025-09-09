@@ -103,6 +103,22 @@ def get_random_question(category, solved_indices, questions):
     return questions[category][word_index], word_index
 
 
+def format_round_start_message(category, hint, masked_word, word_score, total_score):
+    return (
+        f"Категорія: {category}\n"
+        f"Підказка: {hint}\n\n"
+        f"{masked_word}\n\n"
+        f"Бали за слово: {word_score}\n"
+        f"Загалом: {total_score}\n\n"
+        f"Введи літеру або слово:"
+    )
+
+
+def calculate_word_bonus(word, mask):
+    unopened = [i for i, ch in enumerate(mask) if ch == "_"]
+    return len(unopened) * 1000
+
+
 def update_mask(word, guess, current_mask):
     new_mask = current_mask.copy()
     count = 0
