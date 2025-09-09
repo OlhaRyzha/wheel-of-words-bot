@@ -33,14 +33,8 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Create a `.env` file  
-In the project root, create a file named `.env` and add your Telegram bot token:
 
-```env
-API_TOKEN=8430698698:AAEAwW-cRnS-17KSp9AlaO8SzuW_skl2ZU4
-```
-
-### 5. Run the bot
+### 4. Run the bot
 ```bash
 python main.py
 ```
