@@ -1,37 +1,68 @@
 import random
 from utils.constants import (
-    WORD_BONUS_PER_LETTER, DISABLED_PREFIX, DISABLED_TAG, REVEAL_ON_SKIP,
-    AUDIO_BRASS, AUDIO_FAIL,  GIF_GAME_OVER, QUESTIONS_PATH,
-    CATEGORY_SELECTION_TEXT, SKIP_TURN_MESSAGE, CORRECT_LETTER_MESSAGE,
-    WRONG_LETTER_MESSAGE, ALREADY_GUESSED_MESSAGE, INVALID_INPUT_MESSAGE,
-    CATEGORY_COMPLETE_MESSAGE, GAME_OVER_MESSAGE, SPINNING_WHEEL_MESSAGE,
-    BONUS_MESSAGE, WRONG_WORD_MESSAGE, COMPLETED_CATEGORY_MESSAGE,
-    INVALID_CATEGORY_MESSAGE, SKIP_TURN_NO_REVEAL_MESSAGE, BTN_SKIP_ROUND,
-    CANCELLED_ROUND_MESSAGE, BTN_RESET, RESET_DONE_MESSAGE
+    WORD_BONUS_PER_LETTER,
+    DISABLED_PREFIX,
+    DISABLED_TAG,
+    REVEAL_ON_SKIP,
+    AUDIO_BRASS,
+    AUDIO_FAIL,
+    GIF_GAME_OVER,
+    QUESTIONS_PATH,
+    CATEGORY_SELECTION_TEXT,
+    SKIP_TURN_MESSAGE,
+    CORRECT_LETTER_MESSAGE,
+    WRONG_LETTER_MESSAGE,
+    ALREADY_GUESSED_MESSAGE,
+    INVALID_INPUT_MESSAGE,
+    CATEGORY_COMPLETE_MESSAGE,
+    GAME_OVER_MESSAGE,
+    SPINNING_WHEEL_MESSAGE,
+    BONUS_MESSAGE,
+    WRONG_WORD_MESSAGE,
+    COMPLETED_CATEGORY_MESSAGE,
+    INVALID_CATEGORY_MESSAGE,
+    SKIP_TURN_NO_REVEAL_MESSAGE,
+    BTN_SKIP_ROUND,
+    CANCELLED_ROUND_MESSAGE,
+    BTN_RESET,
+    RESET_DONE_MESSAGE,
 )
 from utils.helpers import (
-    spin_wheel, sanitize_category, send_audio_if_exists,
-    send_animation_if_exists, get_round_status_text, try_complete_round,
-    handle_wrong_word, load_questions, create_round_keyboard
+    spin_wheel,
+    sanitize_category,
+    send_audio_if_exists,
+    send_animation_if_exists,
+    get_round_status_text,
+    try_complete_round,
+    handle_wrong_word,
+    load_questions,
+    create_round_keyboard,
+    create_category_keyboard,
 )
 from utils.state import (
-    get_state, is_category_completed,
-    get_solved_indices,  total_in_category, reset_state, save_user_progress
+    get_state,
+    is_category_completed,
+    get_solved_indices,
+    total_in_category,
+    reset_state,
+    save_user_progress,
 )
 
 QUESTIONS = load_questions(QUESTIONS_PATH)
 
+
 def show_categories(bot, chat_id):
     user_id = chat_id
-    from utils.helpers import create_category_keyboard
     markup = create_category_keyboard(user_id, QUESTIONS)
     bot.send_message(chat_id, CATEGORY_SELECTION_TEXT, reply_markup=markup)
+
 
 def start_game(bot, message):
     st = get_state(message.chat.id)
     st["in_round"] = False
     st["round"] = None
     show_categories(bot, message.chat.id)
+
 
 def launch_round(bot, message, category):
 
@@ -55,15 +86,15 @@ def launch_round(bot, message, category):
         "hint": hint,
         "guessed": set(),
         "mask": ["_" for _ in word],
-        "score": 0
+        "score": 0,
     }
     st["in_round"] = True
     st["round"] = round_state
-    status_text = get_round_status_text(round_state, st['total_score'])
+    status_text = get_round_status_text(round_state, st["total_score"])
     bot.send_message(
         message.chat.id,
         f"Категорія: {category}\nПідказка: {hint}\n\n{status_text}",
-        reply_markup=create_round_keyboard()
+        reply_markup=create_round_keyboard(),
     )
 
     return None
@@ -80,6 +111,7 @@ def handle_category_selection(bot, message):
         bot.send_message(message.chat.id, COMPLETED_CATEGORY_MESSAGE)
         return show_categories(bot, message.chat.id)
     return launch_round(bot, message, category)
+
 
 def process_guess(bot, message):
     user_id = message.chat.id
@@ -103,30 +135,30 @@ def process_guess(bot, message):
                 r["mask"] = list(r["word"])
                 if try_complete_round(bot, user_id, st, r):
                     return show_categories(bot, user_id)
-                status_text = get_round_status_text(r, st['total_score'])
+                status_text = get_round_status_text(r, st["total_score"])
                 bot.send_message(user_id, status_text, reply_markup=create_round_keyboard())
                 return None
             else:
                 handle_wrong_word(bot, user_id, st)
                 bot.send_message(user_id, WRONG_WORD_MESSAGE)
-                status_text = get_round_status_text(r, st['total_score'])
+                status_text = get_round_status_text(r, st["total_score"])
                 bot.send_message(user_id, status_text, reply_markup=create_round_keyboard())
                 return None
 
         else:
             handle_wrong_word(bot, user_id, st)
             bot.send_message(user_id, WRONG_WORD_MESSAGE)
-            status_text = get_round_status_text(r, st['total_score'])
+            status_text = get_round_status_text(r, st["total_score"])
             bot.send_message(user_id, status_text, reply_markup=create_round_keyboard())
             return None
     if not guess_up.isalpha() or len(guess_up) != 1:
         bot.send_message(user_id, INVALID_INPUT_MESSAGE)
-        status_text = get_round_status_text(r, st['total_score'])
+        status_text = get_round_status_text(r, st["total_score"])
         bot.send_message(user_id, status_text, reply_markup=create_round_keyboard())
         return None
     if guess_up in r["guessed"]:
         bot.send_message(user_id, ALREADY_GUESSED_MESSAGE)
-        status_text = get_round_status_text(r, st['total_score'])
+        status_text = get_round_status_text(r, st["total_score"])
         bot.send_message(user_id, status_text, reply_markup=create_round_keyboard())
         return None
     bot.send_message(user_id, SPINNING_WHEEL_MESSAGE)
@@ -139,10 +171,10 @@ def process_guess(bot, message):
                     r["mask"][i] = guess_up
             bot.send_message(user_id, SKIP_TURN_MESSAGE.format(letter=guess_up))
             if try_complete_round(bot, user_id, st, r):
-                return show_categories(bot,user_id)
+                return show_categories(bot, user_id)
         else:
             bot.send_message(user_id, SKIP_TURN_NO_REVEAL_MESSAGE)
-        status_text = get_round_status_text(r, st['total_score'])
+        status_text = get_round_status_text(r, st["total_score"])
         bot.send_message(user_id, status_text, reply_markup=create_round_keyboard())
         return None
     r["guessed"].add(guess_up)
@@ -166,20 +198,22 @@ def process_guess(bot, message):
             send_animation_if_exists(bot, user_id, GIF_GAME_OVER, caption=GAME_OVER_MESSAGE)
     if try_complete_round(bot, user_id, st, r):
         return show_categories(bot, user_id)
-    status_text = get_round_status_text(r, st['total_score'])
+    status_text = get_round_status_text(r, st["total_score"])
     bot.send_message(user_id, status_text, reply_markup=create_round_keyboard())
     return None
 
 
 def register_handlers(bot):
-    @bot.message_handler(func=lambda m: m.text == BTN_SKIP_ROUND and get_state(m.chat.id)["in_round"])
+    @bot.message_handler(
+        func=lambda m: m.text == BTN_SKIP_ROUND and get_state(m.chat.id)["in_round"]
+    )
     def skip_round(message):
         user_id = message.chat.id
         st = get_state(user_id)
         st["in_round"] = False
         st["round"] = None
         bot.send_message(user_id, CANCELLED_ROUND_MESSAGE)
-        show_categories(bot,user_id)
+        show_categories(bot, user_id)
 
     @bot.message_handler(func=lambda m: m.text == BTN_RESET)
     def reset_game(message):
@@ -195,15 +229,29 @@ def register_handlers(bot):
     @bot.message_handler(commands=["start"])
     def cmd_start(message):
         start_game(bot, message)
+
     @bot.message_handler(func=lambda m: m.text == "🎮 Грати в Поле Чудес")
     def play_btn(message):
         start_game(bot, message)
-    @bot.message_handler(func=lambda m: not get_state(m.chat.id)["in_round"] and (m.text and (m.text in QUESTIONS.keys() or m.text.startswith(DISABLED_PREFIX) or m.text.endswith(DISABLED_TAG))))
+
+    @bot.message_handler(
+        func=lambda m: not get_state(m.chat.id)["in_round"]
+        and (
+            m.text
+            and (
+                m.text in QUESTIONS.keys()
+                or m.text.startswith(DISABLED_PREFIX)
+                or m.text.endswith(DISABLED_TAG)
+            )
+        )
+    )
     def category_buttons(message):
         handle_category_selection(bot, message)
+
     @bot.message_handler(func=lambda m: get_state(m.chat.id)["in_round"])
     def game_flow(message):
         process_guess(bot, message)
+
     @bot.message_handler(func=lambda m: True)
     def fallback(message):
         if not get_state(message.chat.id)["in_round"]:

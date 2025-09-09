@@ -3,17 +3,13 @@ import os
 from typing import Dict, Any
 
 USER_STATES: Dict[int, Dict[str, Any]] = {}
-STATE_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "user_state.json")
+STATE_FILE = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "user_state.json"
+)
 
 
 def _default_state() -> Dict[str, Any]:
-    return {
-        "total_score": 0,
-        "mistakes": 0,
-        "in_round": False,
-        "round": None,
-        "solved": {}
-    }
+    return {"total_score": 0, "mistakes": 0, "in_round": False, "round": None, "solved": {}}
 
 
 def get_state(user_id: int) -> Dict[str, Any]:
@@ -86,7 +82,9 @@ def save_user_progress() -> bool:
     try:
         dump: Dict[str, Any] = {}
         for uid, st in USER_STATES.items():
-            solved_serializable = {cat: sorted(list(indices)) for cat, indices in st["solved"].items()}
+            solved_serializable = {
+                cat: sorted(list(indices)) for cat, indices in st["solved"].items()
+            }
             out = dict(st)
             out["solved"] = solved_serializable
             dump[str(uid)] = out
@@ -96,6 +94,7 @@ def save_user_progress() -> bool:
         return True
     except (OSError, ValueError, TypeError):
         return False
+
 
 def load_user_progress() -> bool:
     if not os.path.exists(STATE_FILE):
