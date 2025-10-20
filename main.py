@@ -9,4 +9,7 @@ game_handler.register_handlers(bot)
 
 if __name__ == "__main__":
     print("Bot is running...")
-    bot.infinity_polling()
+
+    bot.remove_webhook()
+
+    bot.infinity_polling(skip_pending=True)
